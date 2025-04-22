@@ -297,12 +297,54 @@ def multi_program():
     
 def test_static_power():
     run(['4.0GHz', 'testStaticPower', 'slowDVFS'], get_instance('parsec-blackscholes', 3, input_set='simsmall'))
+    
 
+def coldestcore_demo():
+    # Define benchmarks and their supported thread counts
+    benchmark_configs = {
+        'parsec-blackscholes': [2, 3, 4],  # Min thread count is 2
+        'parsec-streamcluster': [2, 3, 4]  # Min thread count is 2
+    }
+    
+    for benchmark, thread_counts in benchmark_configs.items():
+        for threads in thread_counts:
+            print("Running {} with {} threads...".format(benchmark, threads))
+            
+            # No migration (baseline)
+            run(['4.0GHz', 'maxFreq', 'slowDVFS'], get_instance(benchmark, threads, input_set='simsmall'))
+            
+            # With ColdestCore migration policy
+            run(['4.0GHz', 'maxFreq', 'slowDVFS', 'coldestCore'], get_instance(benchmark, threads, input_set='simsmall'))
 
+def minimal_migration_test():
+    """
+    Run the most minimal thread migration test possible:
+    - Just one benchmark (blackscholes)
+    - Minimum threads (2)
+    - Smallest input (simsmall)
+    - Compare baseline vs migration
+    """
+    print("Running minimal thread migration test...")
+    
+    benchmark = 'parsec-blackscholes'
+    threads = 2
+    input_set = 'simsmall'
+    
+    # First run baseline (no migration)
+    print("Running baseline without migration")
+    run(['4.0GHz', 'maxFreq', 'slowDVFS'], 
+        get_instance(benchmark, threads, input_set=input_set))
+    
+    # Then run with ColdestCore migration
+    print("Running with ColdestCore migration")
+    run(['4.0GHz', 'maxFreq', 'slowDVFS', 'coldestCore'], 
+        get_instance(benchmark, threads, input_set=input_set))
 def main():
-    example()
+    # example()
     #test_static_power()
     # multi_program()
+    # coldestcore_demo()
+    minimal_migration_test()
 
 if __name__ == '__main__':
     main()
