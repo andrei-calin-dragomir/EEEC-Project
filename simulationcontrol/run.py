@@ -311,10 +311,10 @@ def coldestcore_demo():
             print("Running {} with {} threads...".format(benchmark, threads))
             
             # No migration (baseline)
-            run(['4.0GHz', 'maxFreq', 'slowDVFS'], get_instance(benchmark, threads, input_set='simsmall'))
-            
+            run(['3.0GHz', 'maxFreq', 'slowDVFS'], get_instance(benchmark, threads, input_set='simsmall'))
+        
             # With ColdestCore migration policy
-            run(['4.0GHz', 'maxFreq', 'slowDVFS', 'coldestCore'], get_instance(benchmark, threads, input_set='simsmall'))
+            run(['3.0GHz', 'maxFreq', 'slowDVFS', 'coldestCore'], get_instance(benchmark, threads, input_set='simsmall'))
 
 def minimal_migration_test():
     """
@@ -331,13 +331,13 @@ def minimal_migration_test():
     input_set = 'simsmall'
     
     # First run baseline (no migration)
-    print("Running baseline without migration")
-    run(['4.0GHz', 'maxFreq', 'slowDVFS'], 
-        get_instance(benchmark, threads, input_set=input_set))
+    # print("Running baseline without migration")
+    # run(['3.0GHz', 'maxFreq', 'slowDVFS'], 
+    #     get_instance(benchmark, threads, input_set=input_set))
     
     # Then run with ColdestCore migration
     print("Running with ColdestCore migration")
-    run(['4.0GHz', 'maxFreq', 'slowDVFS', 'coldestCore'], 
+    run(['3.0GHz', 'maxFreq', 'slowDVFS', 'coldestCore'], 
         get_instance(benchmark, threads, input_set=input_set))
 def main():
     # example()

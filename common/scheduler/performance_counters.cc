@@ -137,12 +137,14 @@ double PerformanceCounters::getTemperatureOfComponent (string component) const {
 double PerformanceCounters::getTemperatureOfCore(int coreId) const {
     string prefix = "C_" + std::to_string(coreId) + "_";
     vector<double> temperatures = getValues(instTemperatureFileName, prefix);
-
+    cout << "temperatures.size() = " << temperatures.size() << endl;
     if (temperatures.size() == 0) {
         return -1;
     }
-
-    return *std::max_element(temperatures.begin(), temperatures.end());
+    cout << "temperatures.size() = " << temperatures.size() << endl;
+    double res = *std::max_element(temperatures.begin(), temperatures.end());
+    cout << "temperatures.size() = " << temperatures.size() << endl;
+    return res;
 }
 
 /**
