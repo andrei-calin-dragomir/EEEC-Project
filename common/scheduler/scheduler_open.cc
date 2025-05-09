@@ -13,6 +13,11 @@
 #include "thread_manager.h"
 #include "stats.h"
 
+// Begin custom policies by the Lab group
+#include "policies/dvfsOndemand.h"
+#include "policies/dvfsDualFreq.h"
+// End custom policies by Lab group
+
 #include "policies/dvfsMaxFreq.h"
 #include "policies/dvfsFixedPower.h"
 #include "policies/dvfsTSP.h"
@@ -321,6 +326,31 @@ void SchedulerOpen::initDVFSPolicy(String policyName) {
 		thermalModel = new ThermalModel((unsigned int)coreRows, (unsigned int)coreColumns, thermalModelFilename, ambientTemperature, maxTemperature, inactivePower, tdp);
 
 		dvfsPolicy = new DVFSTSP(thermalModel, performanceCounters, coreRows, coreColumns, minFrequency, maxFrequency, frequencyStepSize);
+	} else if (policyName == "ondemand") {
+       float upThreshold = Sim()->getCfg()->getFloat(
+           "scheduler/open/dvfs/ondemand/up_threshold");
+       float downThreshold = Sim()->getCfg()->getFloat(
+           "scheduler/open/dvfs/ondemand/down_threshold");
+       float dtmCriticalTemperature = Sim()->getCfg()->getFloat(
+           "scheduler/open/dvfs/ondemand/dtm_cricital_temperature");
+       float dtmRecoveredTemperature = Sim()->getCfg()->getFloat(
+           "scheduler/open/dvfs/ondemand/dtm_recovered_temperature");
+       dvfsPolicy = new DVFSOndemand(
+              performanceCounters,
+              coreRows,
+              coreColumns,
+              minFrequency,
+              maxFrequency,
+              frequencyStepSize,
+              upThreshold,
+              downThreshold,
+              dtmCriticalTemperature,
+              dtmRecoveredTemperature
+       );
+	} else if (policyName == "dualFreq") {
+		int freqOne = 1000;
+		int freqTwo = 4000;
+		dvfsPolicy = new DVFSDualFreq(performanceCounters, coreRows, coreColumns, freqOne, freqTwo);
 	} else {
 		cout << "\n[Scheduler] [Error]: Unknown DVFS Algorithm" << endl;
  		exit (1);
