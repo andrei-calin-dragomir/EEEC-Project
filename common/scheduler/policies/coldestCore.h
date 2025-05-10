@@ -6,6 +6,7 @@ core
 #ifndef __COLDESTCORE_H
 #define __COLDESTCORE_H
 #include <vector>
+#include <queue>
 #include "mappingpolicy.h"
 #include "migrationpolicy.h"
 #include "performance_counters.h"
@@ -23,10 +24,13 @@ public:
 
 private:
     const PerformanceCounters *performanceCounters;
+    static const int WINDOW_SIZE = 5;
     unsigned int coreRows;
     unsigned int coreColumns;
     float criticalTemperature;
+    std::vector<std::queue<float>> tempQueues;
     int getColdestCore(const std::vector<bool> &availableCores);
     void logTemperatures(const std::vector<bool> &availableCores);
+    float averageTemperature(int core);
 };
 #endif
