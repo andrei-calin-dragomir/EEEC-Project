@@ -7,21 +7,20 @@ ColdestCore::ColdestCore(const PerformanceCounters *performanceCounters,
     : performanceCounters(performanceCounters),
       coreRows(coreRows),
       coreColumns(coreColumns),
-      criticalTemperature(criticalTemperature) {}
+      criticalTemperature(criticalTemperature) {
+        // Initialize the previous temperatures queues
+        for (int c = 0; c < coreRows * coreColumns; c++) {
+            std::queue<float> newQueue;
+            newQueue.push(0.0);
+            tempQueues.push_back(newQueue);
+        }
+      }
 std::vector<int> ColdestCore::map(String taskName, int taskCoreRequirement,
                                   const std::vector<bool> &availableCoresRO,
                                   const std::vector<bool> &activeCores)
 {
     std::vector<bool> availableCores(availableCoresRO);
     std::vector<int> cores;
-
-    // Initialize the previous temperatures queues
-    cout << "[Scheduler] [INIT tempqueeus]" << endl;
-    for (int c = 0; c < coreRows * coreColumns; c++) {
-        std::queue<float> newQueue;
-        newQueue.push(0.0);
-        tempQueues.push_back(newQueue);
-    }
 
     logTemperatures(availableCores);
     for (; taskCoreRequirement > 0; taskCoreRequirement--)
@@ -51,21 +50,16 @@ std::vector<migration> ColdestCore::migrate(
     {
         availableCores.at(c) = taskIds.at(c) == -1;
     }
-    cout << "RUNNING MIGRATE POLICY" << endl;
-    cout << "RUNNING MIGRATE POLICY" << endl;
-    cout << "RUNNING MIGRATE POLICY" << endl;
+    
     for (int c = 0; c < coreRows * coreColumns; c++)
     {
         if (activeCores.at(c))
         {
-            cout << "Get temp: " << performanceCounters << endl;
-            float temperature = (float)performanceCounters->getTemperatureOfCore(c);
-            cout << "Get back of queue: " << tempQueues[c].size() << endl;
+            float temperature = performanceCounters->getTemperatureOfCore(c);
             float diffTemp = temperature - tempQueues[c].back();
             tempQueues[c].push(temperature);
             if (tempQueues[c].size() > WINDOW_SIZE)
             {
-                cout << "TRYING TO DEQUEUE !!!!!!!!!!!!!!!!!" << endl;
                 tempQueues[c].pop();
             }
             float avgTemp = this->averageTemperature(c);
@@ -148,18 +142,15 @@ void ColdestCore::logTemperatures(const std::vector<bool> &availableCores)
 float ColdestCore::averageTemperature(int core) {
     std::queue<float> tempQueue = tempQueues[core];
     std::queue<float> tempQueueCopy = tempQueue;
-    cout << "1. temp queue sizes: " << tempQueue.size() << " , " << tempQueueCopy.size() << endl;
     if (tempQueue.size() == 0) {
         return 0.0;
     }
     // Calculate the average temperature
     float sum = 0.0;
-    cout << "2. temp queue sizes: " << tempQueue.size() << " , " << tempQueueCopy.size() << endl;
     while (!tempQueueCopy.empty()) {
         sum += tempQueueCopy.front();
         tempQueueCopy.pop();
     }
 
-    cout << "3. temp queue sizes: " << tempQueue.size() << " , " << tempQueueCopy.size() << endl;
     return sum / tempQueue.size();
 }

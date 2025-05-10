@@ -397,9 +397,9 @@ def minimal_migration_test():
     input_set = 'simsmall'
     
     # First run baseline (no migration)
-    # print("Running baseline without migration")
-    # run(['3.0GHz', 'maxFreq', 'slowDVFS'], 
-    #     get_instance(benchmark, threads, input_set=input_set))
+    print("Running baseline without migration")
+    run(['3.0GHz', 'maxFreq', 'slowDVFS'], 
+        get_instance(benchmark, threads, input_set=input_set))
     
     # Then run with ColdestCore migration
     print("Running with ColdestCore migration")
