@@ -363,7 +363,7 @@ def test_static_power():
     run(['4.0GHz', 'testStaticPower', 'slowDVFS'], get_instance('parsec-blackscholes', 3, input_set='simsmall'))
 
 def ondemand_demo():
-    run(['{:.1f}GHz'.format(1), 'maxFreq', 'fastDVFS'], get_instance('parsec-blackscholes', 4, input_set='simsmall'))
+    run(['{:.1f}GHz'.format(4), 'ondemand', 'fastDVFS'], get_instance('parsec-blackscholes', 3, input_set='simsmall'))
 
 def coldestcore_demo():
     # Define benchmarks and their supported thread counts
@@ -405,15 +405,70 @@ def minimal_migration_test():
     print("Running with ColdestCore migration")
     run(['3.0GHz', 'maxFreq', 'slowDVFS', 'coldestCore'], 
         get_instance(benchmark, threads, input_set=input_set))
-def main():
-    # example()
-    #test_static_power()
-    # multi_program()
 
-    # example_symmetric_perforation()
-    # example_asymmetric_perforation()
-        # coldestcore_demo()
-    minimal_migration_test()
+# Start assignment 3
+def assignment_3_single_program():
+    input_set = 'simsmall'
+    configs = [
+        # nothing_nothing_baseline_configuration
+        ['4.0GHz', 'ondemand', "slowDVFS"],
+        # nothing_baseline_configuration
+        ['4.0GHz', 'maxFreq', "slowDVFS"],
+        # ondemand_baseline_configuration
+        ['4.0GHz', 'maxFreq', "slowDVFS", "ondemand"],
+        # base_configuration
+        ['4.0GHz', 'maxFreq', "slowDVFS", "coldestCore"]
+    ]
+    
+    # benchmark = get_instance('parsec-fluidanimate', 2, input_set)
+    benchmark = get_instance('parsec-blackscholes', 2, input_set)
+    for c in configs:
+        # if ENABLE_HEARTBEATS == True:
+        #     c.append('hb_enabled')
+        run(c, benchmark)
+
+    # benchmark = get_instance('parsec-canneal', 2, input_set)
+    benchmark = get_instance('parsec-streamcluster', 2, input_set)
+    for c in configs:
+        # if ENABLE_HEARTBEATS == True:
+        #     c.append('hb_enabled')
+        run(c, benchmark)
+
+
+def assignment_3_multi_program():
+    input_set = 'simsmall'
+    configs = [
+        # nothing_nothing_baseline_configuration
+        ['4.0GHz', 'ondemand', "slowDVFS"],
+        # nothing_baseline_configuration
+        ['4.0GHz', 'maxFreq', "slowDVFS"],
+        # ondemand_baseline_configuration
+        ['4.0GHz', 'maxFreq', "slowDVFS", "ondemand"],
+        # base_configuration
+        ['4.0GHz', 'maxFreq', "slowDVFS", "coldestCore"]
+    ]
+    benchmark_set = (
+        'parsec-x264',
+        'parsec-x264',
+    )
+
+    benchmarks = ''
+    for i, benchmark in enumerate(benchmark_set):
+        min_parallelism = get_feasible_parallelisms(benchmark)[0]
+        if i != 0:
+            benchmarks = benchmarks + ',' + get_instance(benchmark, min_parallelism, input_set)
+        else:
+            benchmarks = benchmarks + get_instance(benchmark, min_parallelism, input_set)
+
+    for c in configs:
+        if ENABLE_HEARTBEATS == True:
+            c.append('hb_enabled')
+        run(c, benchmarks)
+
+
+def main():
+    assignment_3_multi_program()
+    assignment_3_single_program()
 
 if __name__ == '__main__':
     main()
