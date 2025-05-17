@@ -21,10 +21,22 @@ FinalDVFS::FinalDVFS(const PerformanceCounters *performanceCounters,
       worryTemperature(worryTemperature),
       noWorryTemperature(noWorryTemperature),
       dtmCriticalTemperature(dtmCriticalTemperature),
-      dtmRecoveredTemperature(dtmRecoveredTemperature) {}
+      dtmRecoveredTemperature(dtmRecoveredTemperature) {
+        for (unsigned int core = 0; core < coreRows * coreColumns; core++) {
+            oldTemperatures.push_back(0.0);
+        }
+      }
 std::vector<int> FinalDVFS::getFrequencies(
     const std::vector<int> &oldFrequencies,
     const std::vector<bool> &activeCores) {
+        std:vector<bool> isIncreasing (coreRows * coreColumns, false);
+
+        for (unsigned int coreCounter = 0; coreCounter < coreRows * coreColumns; coreCounter++) {
+            double temp = performanceCounters->getTemperatureOfCore(coreCounter);
+            isIncreasing.at(coreCounter) = temp > oldTemperatures.at(coreCounter);
+            oldTemperatures.at(coreCounter) = temp;
+        }
+
         cout << "[Scheduler][ondemand-DTM]: checking for frequencies" << endl;
         if (throttle()) {
             std::vector<int> frequencies(coreRows * coreColumns, minFrequency);
@@ -33,8 +45,13 @@ std::vector<int> FinalDVFS::getFrequencies(
             std::vector<int> frequencies(coreRows * coreColumns);
             for (unsigned int coreCounter = 0; coreCounter < coreRows * coreColumns; coreCounter++) {
                 if (activeCores.at(coreCounter)) {
-                    int freq = oldFrequencies.at(coreCounter);
-                    frequencies.at(coreCounter) = maxFrequency;
+                    const float core_temp = performanceCounters->getTemperatureOfCore(coreCounter);
+                    if (core_temp > worryTemperature && isIncreasing.at(coreCounter)) {
+                        frequencies.at(coreCounter) = frequencies.at(coreCounter) - 1;
+                    } else {
+                        int freq = oldFrequencies.at(coreCounter);
+                        frequencies.at(coreCounter) = maxFrequency;
+                    }
                 } else {
                     frequencies.at(coreCounter) = minFrequency;
                 }

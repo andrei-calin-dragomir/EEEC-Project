@@ -17,6 +17,7 @@ class FinalDVFS : public DVFSPolicy {
 
    private:
     const PerformanceCounters *performanceCounters;
+    std::vector<float> oldTemperatures;
     unsigned int coreRows;
     unsigned int coreColumns;
     int minFrequency;
