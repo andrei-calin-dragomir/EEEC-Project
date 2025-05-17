@@ -409,30 +409,16 @@ def minimal_migration_test():
 # Start assignment 3
 def assignment_3_single_program():
     input_set = 'simsmall'
-    configs = [
-        # nothing_nothing_baseline_configuration
-        ['4.0GHz', 'ondemand', "slowDVFS"],
-        # nothing_baseline_configuration
-        ['4.0GHz', 'maxFreq', "slowDVFS"],
-        # ondemand_baseline_configuration
-        ['4.0GHz', 'maxFreq', "slowDVFS", "ondemand"],
-        # base_configuration
-        ['4.0GHz', 'maxFreq', "slowDVFS", "coldestCore"]
-    ]
     
+    benchmark_config = 'parsec-blackscholes'
+
     # benchmark = get_instance('parsec-fluidanimate', 2, input_set)
-    benchmark = get_instance('parsec-blackscholes', 2, input_set)
-    for c in configs:
-        # if ENABLE_HEARTBEATS == True:
-        #     c.append('hb_enabled')
-        run(c, benchmark)
+    benchmark = get_instance(benchmark_config, 2, input_set)
+    run(['4.0GHz', 'maxFreq', 'slowDVFS', 'final_dvfs', 'final_migration'], benchmark)
 
     # benchmark = get_instance('parsec-canneal', 2, input_set)
-    benchmark = get_instance('parsec-streamcluster', 2, input_set)
-    for c in configs:
-        # if ENABLE_HEARTBEATS == True:
-        #     c.append('hb_enabled')
-        run(c, benchmark)
+    benchmark = get_instance(benchmark_config, 2, input_set)
+    run(['4.0GHz', 'maxFreq', 'slowDVFS', 'coldestCore'], benchmark)
 
 
 def assignment_3_multi_program():
@@ -445,9 +431,10 @@ def assignment_3_multi_program():
         # # ondemand_baseline_configuration
         # ['4.0GHz', 'maxFreq', "slowDVFS", "ondemand"],
         # # base_configuration
-        # ['4.0GHz', 'maxFreq', "slowDVFS", "coldestCore"]
+        ['4.0GHz', 'maxFreq', "slowDVFS", "ondemand", "coldestCore"]
     ]
     benchmark_set = (
+        'parsec-blackscholes',
         'parsec-blackscholes',
     )
 
@@ -460,14 +447,14 @@ def assignment_3_multi_program():
             benchmarks = benchmarks + get_instance(benchmark, min_parallelism, input_set)
 
     for c in configs:
-        if ENABLE_HEARTBEATS == True:
-            c.append('hb_enabled')
+        # if ENABLE_HEARTBEATS == True:
+        #     c.append('hb_enabled')
         run(c, benchmarks)
 
 
 def main():
-    assignment_3_multi_program()
-    # assignment_3_single_program()
+    # assignment_3_multi_program()
+    assignment_3_single_program()
 
 if __name__ == '__main__':
     main()
