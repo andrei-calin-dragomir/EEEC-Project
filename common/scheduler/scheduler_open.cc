@@ -22,6 +22,7 @@
 
 // Final assignment policies
 #include "policies/finalDVFS.h"
+#include "policies/finalMigration.h"
 
 // End custom policies by Lab group
 
@@ -416,6 +417,16 @@ void SchedulerOpen::initMigrationPolicy(String policyName) {
 			"scheduler/open/migration/coldestCore/criticalTemperature");
 		migrationPolicy = new ColdestCore(performanceCounters, coreRows,
 										  coreColumns, criticalTemperature);
+	} else if (policyName == "final_migration") {
+		float criticalTemperature = Sim()->getCfg()->getFloat(
+			"scheduler/open/migration/coldestCore/criticalTemperature");
+		float worryTemperature = Sim()->getCfg()->getFloat(
+			"scheduler/open/migration/final_dvfs/worry_temperature"
+		);
+		migrationPolicy = new FinalMigration(performanceCounters, 
+			coreRows, coreColumns, 
+			worryTemperature, maxFrequency,
+			criticalTemperature);
 	}
 	else
 	{

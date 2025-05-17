@@ -439,7 +439,7 @@ def assignment_3_multi_program():
     input_set = 'simsmall'
     configs = [
         # nothing_nothing_baseline_configuration
-        ['4.0GHz', 'maxFreq', 'slowDVFS', 'final_dvfs'],
+        ['4.0GHz', 'maxFreq', 'slowDVFS', 'final_dvfs', 'final_migration'],
         # # nothing_baseline_configuration
         # ['4.0GHz', 'maxFreq', "slowDVFS"],
         # # ondemand_baseline_configuration
