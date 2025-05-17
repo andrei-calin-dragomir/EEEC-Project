@@ -406,55 +406,56 @@ def minimal_migration_test():
     run(['3.0GHz', 'maxFreq', 'slowDVFS', 'coldestCore'], 
         get_instance(benchmark, threads, input_set=input_set))
 
-# Start assignment 3
-def assignment_3_single_program():
-    input_set = 'simsmall'
-    
-    benchmark_config = 'parsec-blackscholes'
-
-    # benchmark = get_instance('parsec-fluidanimate', 2, input_set)
-    benchmark = get_instance(benchmark_config, 2, input_set)
-    run(['4.0GHz', 'maxFreq', 'slowDVFS', 'final_dvfs', 'final_migration'], benchmark)
-
-    # benchmark = get_instance('parsec-canneal', 2, input_set)
-    benchmark = get_instance(benchmark_config, 2, input_set)
-    run(['4.0GHz', 'maxFreq', 'slowDVFS', 'ondemand', 'coldestCore'], benchmark)
-
-
-def assignment_3_multi_program():
+# Start assignment 4
+def assignment_4_single_program():
     input_set = 'simsmall'
     configs = [
-        # nothing_nothing_baseline_configuration
+        # Our final implementation
         ['4.0GHz', 'maxFreq', 'slowDVFS', 'final_dvfs', 'final_migration'],
-        # # nothing_baseline_configuration
-        # ['4.0GHz', 'maxFreq', "slowDVFS"],
-        # # ondemand_baseline_configuration
-        # ['4.0GHz', 'maxFreq', "slowDVFS", "ondemand"],
-        # # base_configuration
+        # Baseline (SotA)
         ['4.0GHz', 'maxFreq', "slowDVFS", "ondemand", "coldestCore"]
     ]
-    benchmark_set = (
-        'parsec-blackscholes',
-        'parsec-blackscholes',
-    )
+    benchmarks = ['parsec-blackscholes', 'parsec-streamcluster', 'parsec-x264']
 
-    benchmarks = ''
-    for i, benchmark in enumerate(benchmark_set):
-        min_parallelism = get_feasible_parallelisms(benchmark)[0]
-        if i != 0:
-            benchmarks = benchmarks + ',' + get_instance(benchmark, min_parallelism, input_set)
-        else:
-            benchmarks = benchmarks + get_instance(benchmark, min_parallelism, input_set)
+    for b in benchmarks:
+        for c in configs:
+            min_parallelism = get_feasible_parallelisms(b)[0]
+            benchmark = get_instance(b, min_parallelism, input_set)
+            print("Running: {} with {}".format(b, c))
+            run(c, benchmark)
 
-    for c in configs:
-        # if ENABLE_HEARTBEATS == True:
-        #     c.append('hb_enabled')
-        run(c, benchmarks)
+def assignment_4_multi_program():
+    input_set = 'simsmall'
+    configs = [
+        # Our final implementation
+        ['4.0GHz', 'maxFreq', 'slowDVFS', 'final_dvfs', 'final_migration'],
+        # Baseline (SotA)
+        ['4.0GHz', 'maxFreq', "slowDVFS", "ondemand", "coldestCore"]
+    ]
+    benchmark_set = [
+        ('parsec-blackscholes', 'parsec-blackscholes'),
+        ('parsec-streamcluster', 'parsec-streamcluster'),
+        ('parsec-blackscholes', 'parsec-streamcluster'),
+        ('parsec-x264', 'parsec-x264'),
+        ('parsec-x264', 'parsec-x264', 'parsec-x264'),
+    ]
 
+    for benchmark_pair in benchmark_set:
+        b = ''
+        for i, benchmark in enumerate(benchmark_pair):
+            min_parallelism = get_feasible_parallelisms(benchmark)[0]
+            if i != 0:
+                b +=  ',' + get_instance(benchmark, min_parallelism, input_set)
+            else:
+                b += get_instance(benchmark, min_parallelism, input_set)
+        
+        for c in configs:
+            print("Running: {} with {}".format(b, c))
+            run(c, b)
 
 def main():
-    # assignment_3_multi_program()
-    assignment_3_single_program()
+    assignment_4_single_program()
+    assignment_4_multi_program()
 
 if __name__ == '__main__':
     main()

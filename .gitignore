@@ -44,6 +44,7 @@ tools/pinversion
 
 # result files
 results/
+results_*
 !results/.DO_NOT_DELETE
 
 # dependencies
