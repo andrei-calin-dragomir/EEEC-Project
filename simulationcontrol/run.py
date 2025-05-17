@@ -439,17 +439,16 @@ def assignment_3_multi_program():
     input_set = 'simsmall'
     configs = [
         # nothing_nothing_baseline_configuration
-        ['4.0GHz', 'ondemand', "slowDVFS"],
-        # nothing_baseline_configuration
-        ['4.0GHz', 'maxFreq', "slowDVFS"],
-        # ondemand_baseline_configuration
-        ['4.0GHz', 'maxFreq', "slowDVFS", "ondemand"],
-        # base_configuration
-        ['4.0GHz', 'maxFreq', "slowDVFS", "coldestCore"]
+        ['4.0GHz', 'maxFreq', 'slowDVFS', 'final_dvfs'],
+        # # nothing_baseline_configuration
+        # ['4.0GHz', 'maxFreq', "slowDVFS"],
+        # # ondemand_baseline_configuration
+        # ['4.0GHz', 'maxFreq', "slowDVFS", "ondemand"],
+        # # base_configuration
+        # ['4.0GHz', 'maxFreq', "slowDVFS", "coldestCore"]
     ]
     benchmark_set = (
-        'parsec-x264',
-        'parsec-x264',
+        'parsec-blackscholes',
     )
 
     benchmarks = ''
@@ -468,7 +467,7 @@ def assignment_3_multi_program():
 
 def main():
     assignment_3_multi_program()
-    assignment_3_single_program()
+    # assignment_3_single_program()
 
 if __name__ == '__main__':
     main()

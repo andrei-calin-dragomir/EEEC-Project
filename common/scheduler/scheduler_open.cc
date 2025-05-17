@@ -16,7 +16,13 @@
 // Begin custom policies by the Lab group
 #include "policies/dvfsOndemand.h"
 #include "policies/dvfsDualFreq.h"
+
+// SotA policies
 #include "policies/coldestCore.h"
+
+// Final assignment policies
+#include "policies/finalDVFS.h"
+
 // End custom policies by Lab group
 
 #include "policies/dvfsMaxFreq.h"
@@ -361,6 +367,33 @@ void SchedulerOpen::initDVFSPolicy(String policyName) {
               dtmCriticalTemperature,
               dtmRecoveredTemperature
        );
+	} else if (policyName == "final_dvfs") {
+		float upThreshold = Sim()->getCfg()->getFloat(
+			"scheduler/open/dvfs/final_dvfs/up_threshold");
+		float downThreshold = Sim()->getCfg()->getFloat(
+			"scheduler/open/dvfs/final_dvfs/down_threshold");
+		float worryTemperature = Sim()->getCfg()->getFloat(
+			"scheduler/open/dvfs/final_dvfs/worry_temperature");
+		float noWorryTemperature = Sim()->getCfg()->getFloat(
+			"scheduler/open/dvfs/final_dvfs/no_worry_temperature");
+		float criticalTemperature = Sim()->getCfg()->getFloat(
+			"scheduler/open/dvfs/final_dvfs/cricital_temperature");
+		float recoveredTemperature = Sim()->getCfg()->getFloat(
+			"scheduler/open/dvfs/final_dvfs/recovered_temperature");
+		dvfsPolicy = new FinalDVFS(
+			   performanceCounters,
+			   coreRows,
+			   coreColumns,
+			   minFrequency,
+			   maxFrequency,
+			   frequencyStepSize,
+			   upThreshold,
+			   downThreshold,
+			   worryTemperature,
+			   noWorryTemperature,
+			   criticalTemperature,
+			   recoveredTemperature
+		);
 	} else if (policyName == "dualFreq") {
 		int freqOne = 1000;
 		int freqTwo = 4000;
