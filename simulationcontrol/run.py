@@ -418,7 +418,7 @@ def assignment_3_single_program():
 
     # benchmark = get_instance('parsec-canneal', 2, input_set)
     benchmark = get_instance(benchmark_config, 2, input_set)
-    run(['4.0GHz', 'maxFreq', 'slowDVFS', 'coldestCore'], benchmark)
+    run(['4.0GHz', 'maxFreq', 'slowDVFS', 'ondemand', 'coldestCore'], benchmark)
 
 
 def assignment_3_multi_program():
