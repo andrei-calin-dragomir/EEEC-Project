@@ -47,7 +47,9 @@ std::vector<int> FinalDVFS::getFrequencies(
                 if (activeCores.at(coreCounter)) {
                     const float core_temp = performanceCounters->getTemperatureOfCore(coreCounter);
                     if (core_temp > worryTemperature && isIncreasing.at(coreCounter)) {
-                        frequencies.at(coreCounter) = frequencies.at(coreCounter) - 1;
+                       frequencies.at(coreCounter) = oldFrequencies.at(coreCounter) - 1000;
+                    } else if (core_temp > worryTemperature) {
+                        frequencies.at(coreCounter) = oldFrequencies.at(coreCounter);
                     } else {
                         int freq = oldFrequencies.at(coreCounter);
                         frequencies.at(coreCounter) = maxFrequency;
@@ -58,8 +60,6 @@ std::vector<int> FinalDVFS::getFrequencies(
             }
             return frequencies;
         }
-
-
     }
 
 bool FinalDVFS::throttle() {
