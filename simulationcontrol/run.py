@@ -415,7 +415,12 @@ def assignment_4_single_program():
         # Baseline (SotA)
         ['4.0GHz', 'maxFreq', "slowDVFS", "ondemand", "coldestCore"]
     ]
-    benchmarks = ['parsec-blackscholes', 'parsec-streamcluster', 'parsec-x264']
+    benchmarks = [
+        'parsec-blackscholes', 
+        'parsec-streamcluster', 
+        'parsec-canneal', 
+        'parsec-x264'
+    ]
 
     for b in benchmarks:
         for c in configs:
@@ -436,8 +441,9 @@ def assignment_4_multi_program():
         ('parsec-blackscholes', 'parsec-blackscholes'),
         ('parsec-streamcluster', 'parsec-streamcluster'),
         ('parsec-blackscholes', 'parsec-streamcluster'),
+        ('parsec-canneal', 'parsec-canneal')
         ('parsec-x264', 'parsec-x264'),
-        ('parsec-x264', 'parsec-x264', 'parsec-x264'),
+        ('parsec-x264', 'parsec-x264', 'parsec-x264')
     ]
 
     for benchmark_pair in benchmark_set:
